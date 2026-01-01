@@ -1,0 +1,14 @@
+# NCWARN robots.txt
+# https://ncwarn.com
+
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://ncwarn.com/sitemap.xml
+
+# Disallow API endpoints from indexing
+Disallow: /api/
+
+# Allow sitemap
+Allow: /api/sitemap.xml

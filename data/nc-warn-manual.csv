@@ -1,0 +1,77 @@
+Company Name,County,City,Industry,Employees Affected,Notice Date,Effective Date,Notes
+"Bioventus Inc.",Wake,Raleigh,Medical Devices,89,12/15/2025,02/15/2026,Restructuring operations
+"Bandwidth Inc.",Wake,Raleigh,Telecommunications,156,12/10/2025,02/10/2026,Workforce reduction
+"Lowe's Companies Inc.",Mecklenburg,Mooresville,Retail - Home Improvement,312,12/05/2025,02/05/2026,Store closures
+"Duke Energy Progress",Wake,Raleigh,Utilities,78,12/01/2025,01/31/2026,Organizational restructuring
+"Red Hat Inc.",Wake,Raleigh,Software/Technology,234,11/28/2025,01/28/2026,Strategic realignment
+"Advance Auto Parts",Wake,Raleigh,Retail - Auto Parts,145,11/20/2025,01/20/2026,Distribution center closure
+"Honeywell International",Mecklenburg,Charlotte,Manufacturing,198,11/15/2025,01/15/2026,Facility consolidation
+"Bank of America",Mecklenburg,Charlotte,Financial Services,287,11/10/2025,01/10/2026,Technology modernization
+"Wells Fargo",Mecklenburg,Charlotte,Financial Services,176,11/05/2025,01/05/2026,Branch consolidation
+"Novant Health",Forsyth,Winston-Salem,Healthcare,112,11/01/2025,12/31/2025,Administrative restructuring
+"Hanesbrands Inc.",Forsyth,Winston-Salem,Apparel Manufacturing,445,10/28/2025,12/28/2025,Manufacturing relocation
+"Food Lion LLC",Guilford,Greensboro,Retail - Grocery,89,10/20/2025,12/20/2025,Store closures
+"Cone Health",Guilford,Greensboro,Healthcare,134,10/15/2025,12/15/2025,Service line restructuring
+"VF Corporation",Alamance,Greensboro,Apparel,267,10/10/2025,12/10/2025,Corporate restructuring
+"Volvo Trucks North America",Guilford,Greensboro,Manufacturing,178,10/05/2025,12/05/2025,Production adjustment
+"Martin Marietta Materials",Wake,Raleigh,Construction Materials,67,10/01/2025,12/01/2025,Quarry closure
+"Spirit AeroSystems",Lenoir,Kinston,Aerospace Manufacturing,523,09/25/2025,11/25/2025,Contract cancellation
+"Smithfield Foods",Bladen,Tar Heel,Food Processing,234,09/20/2025,11/20/2025,Plant modernization
+"Corning Incorporated",Durham,Durham,Manufacturing,156,09/15/2025,11/15/2025,Product line discontinuation
+"IBM Corporation",Durham,Research Triangle Park,Technology,189,09/10/2025,11/10/2025,Organizational changes
+"Cisco Systems",Wake,Research Triangle Park,Technology,145,09/05/2025,11/05/2025,Workforce optimization
+"SAS Institute",Wake,Cary,Software,312,09/01/2025,11/01/2025,Strategic restructuring
+"Fidelity Investments",Durham,Durham,Financial Services,198,08/28/2025,10/28/2025,Operations consolidation
+"Credit Suisse",Wake,Raleigh,Financial Services,134,08/20/2025,10/20/2025,Office closure
+"MetLife Inc.",Wake,Cary,Insurance,89,08/15/2025,10/15/2025,Technology transformation
+"TIAA",Mecklenburg,Charlotte,Financial Services,167,08/10/2025,10/10/2025,Workforce adjustment
+"Sealed Air Corporation",Mecklenburg,Charlotte,Packaging,112,08/05/2025,10/05/2025,Manufacturing consolidation
+"CommScope Inc.",Catawba,Hickory,Telecommunications Equipment,234,08/01/2025,10/01/2025,Market conditions
+"Ingersoll Rand",Davidson,Thomasville,Industrial Manufacturing,178,07/28/2025,09/28/2025,Facility closure
+"Ashley Furniture",Randolph,Archdale,Furniture Manufacturing,267,07/20/2025,09/20/2025,Production relocation
+"Cree Inc.",Durham,Durham,Semiconductors,189,07/15/2025,09/15/2025,Product transition
+"Epic Games",Wake,Cary,Video Games,145,07/10/2025,09/10/2025,Project cancellation
+"Pendo.io",Wake,Raleigh,Software,78,07/05/2025,09/05/2025,Market conditions
+"Allscripts Healthcare",Wake,Raleigh,Healthcare IT,112,07/01/2025,09/01/2025,Merger integration
+"LabCorp",Guilford,Burlington,Laboratory Services,156,06/28/2025,08/28/2025,Automation implementation
+"PPD Inc.",Pitt,Greenville,Clinical Research,89,06/20/2025,08/20/2025,Study cancellations
+"Brighthouse Financial",Mecklenburg,Charlotte,Insurance,134,06/15/2025,08/15/2025,Operational efficiency
+"Nucor Corporation",Mecklenburg,Charlotte,Steel Manufacturing,198,06/10/2025,08/10/2025,Market downturn
+"Collins Aerospace",Mecklenburg,Charlotte,Aerospace,223,06/05/2025,08/05/2025,Program reduction
+"SPX Corporation",Mecklenburg,Charlotte,Industrial Equipment,89,06/01/2025,08/01/2025,Business restructuring
+"Curtiss-Wright Corporation",Mecklenburg,Charlotte,Aerospace/Defense,112,05/28/2025,07/28/2025,Contract completion
+"General Dynamics",Mecklenburg,Charlotte,Defense,145,05/20/2025,07/20/2025,Program transition
+"Compass Group",Mecklenburg,Charlotte,Food Services,267,05/15/2025,07/15/2025,Contract losses
+"Rentpath Holdings",Mecklenburg,Charlotte,Real Estate Tech,89,05/10/2025,07/10/2025,Business closure
+"LendingTree Inc.",Mecklenburg,Charlotte,Financial Technology,156,05/05/2025,07/05/2025,Market conditions
+"AvidXchange Inc.",Mecklenburg,Charlotte,Financial Technology,134,05/01/2025,07/01/2025,Organizational restructuring
+"Premier Inc.",Mecklenburg,Charlotte,Healthcare Services,112,04/28/2025,06/28/2025,Strategic realignment
+"Dentsply Sirona",Mecklenburg,Charlotte,Medical Devices,89,04/20/2025,06/20/2025,Manufacturing consolidation
+"Extended Stay America",Mecklenburg,Charlotte,Hospitality,178,04/15/2025,06/15/2025,Corporate restructuring
+"Bojangles' Famous Chicken",Mecklenburg,Charlotte,Restaurant,234,04/10/2025,06/10/2025,Store closures
+"Snyder's-Lance Inc.",Mecklenburg,Charlotte,Food Manufacturing,156,04/05/2025,06/05/2025,Plant consolidation
+"Family Dollar Stores",Mecklenburg,Charlotte,Retail - Discount,312,04/01/2025,06/01/2025,Store closures
+"Belk Inc.",Mecklenburg,Charlotte,Retail - Department Store,423,03/28/2025,05/28/2025,Store closures
+"BB&T Corporation",Forsyth,Winston-Salem,Banking,198,03/20/2025,05/20/2025,Merger integration
+"Krispy Kreme Doughnuts",Forsyth,Winston-Salem,Food Service,89,03/15/2025,05/15/2025,Corporate restructuring
+"HanesBrands Inc.",Forsyth,Winston-Salem,Apparel,378,03/10/2025,05/10/2025,Manufacturing shift
+"Reynolds American Inc.",Forsyth,Winston-Salem,Tobacco,234,03/05/2025,05/05/2025,Organizational changes
+"Caterpillar Inc.",Sanford,Sanford,Heavy Equipment,145,03/01/2025,05/01/2025,Production adjustment
+"Perdue Farms",Robeson,St. Pauls,Poultry Processing,289,02/28/2025,04/28/2025,Plant closure
+"Mountaire Farms",Duplin,Warsaw,Poultry Processing,312,02/20/2025,04/20/2025,Operational changes
+"Butterball LLC",Sampson,Garland,Poultry Processing,178,02/15/2025,04/15/2025,Automation
+"House of Raeford Farms",Robeson,Raeford,Poultry Processing,234,02/10/2025,04/10/2025,Market conditions
+"Pilgrim's Pride",Union,Monroe,Poultry Processing,156,02/05/2025,04/05/2025,Plant modernization
+"Continental Tire",Cabarrus,Charlotte,Tire Manufacturing,267,02/01/2025,04/01/2025,Production relocation
+"Cormetech Inc.",Durham,Durham,Industrial Manufacturing,89,01/28/2025,03/28/2025,Business restructuring
+"GlaxoSmithKline",Durham,Research Triangle Park,Pharmaceuticals,312,01/20/2025,03/20/2025,R&D restructuring
+"BASF Corporation",Johnston,Clayton,Chemicals,145,01/15/2025,03/15/2025,Plant closure
+"Merck & Co.",Durham,Durham,Pharmaceuticals,198,01/10/2025,03/10/2025,Site consolidation
+"Biogen Inc.",Wake,Research Triangle Park,Biotechnology,234,01/05/2025,03/05/2025,Pipeline changes
+"Pfizer Inc.",Chatham,Sanford,Pharmaceuticals,178,01/02/2025,03/02/2025,Manufacturing transition
+"TechCorp Industries",Wake,Raleigh,Technology,150,10/15/2024,12/15/2024,Corporate restructuring
+"Manufacturing Plus LLC",Mecklenburg,Charlotte,Manufacturing,87,11/01/2024,01/01/2025,Facility closure
+"Retail Giant Corp",Durham,Durham,Retail,45,11/10/2024,01/15/2025,Store closure
+"Siemens Energy",Mecklenburg,Charlotte,Energy Equipment,134,12/01/2024,02/01/2025,Project completion
+"ABB Inc.",Wake,Raleigh,Industrial Automation,89,12/10/2024,02/10/2025,Market restructuring
+"Hitachi Energy",Mecklenburg,Charlotte,Power Systems,112,12/15/2024,02/15/2025,Organizational changes

@@ -1,0 +1,270 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ============================================
+// CORE MODELS (National-ready architecture)
+// ============================================
+
+model State {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique // 'NC', 'TX', 'CA', etc.
+  name      String   // 'North Carolina'
+  slug      String   @unique // 'north-carolina'
+  active    Boolean  @default(false) // Only NC active for Phase 1
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  counties County[]
+  notices  WarnNotice[]
+  imports  ImportRun[]
+}
+
+model County {
+  id        Int      @id @default(autoincrement())
+  stateId   Int?     // Nullable during migration, will be required after backfill
+  state     State?   @relation(fields: [stateId], references: [id])
+  fips      String   @unique
+  name      String
+  slug      String   // Unique within state
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  notices WarnNotice[]
+  outages Outage[]
+  alerts  WeatherAlert[]
+  jobs    JobPost[]
+
+  @@unique([stateId, slug])
+  @@index([stateId])
+}
+
+model Company {
+  id             Int      @id @default(autoincrement())
+  name           String   // Normalized display name
+  slug           String   @unique
+  nameVariations String[] // Array of raw name variations seen
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  notices WarnNotice[]
+
+  @@index([name])
+}
+
+model WarnNotice {
+  id              Int       @id @default(autoincrement())
+
+  // State relation (national-ready)
+  stateId         Int?      // Nullable during migration
+  state           State?    @relation(fields: [stateId], references: [id])
+
+  // County relation
+  countyId        Int?      // Nullable for unknown counties
+  county          County?   @relation(fields: [countyId], references: [id])
+
+  // Company relation (normalized)
+  companyId       Int?
+  company         Company?  @relation(fields: [companyId], references: [id])
+
+  // Raw data (preserved for audit + display)
+  employer        String    // Original/raw company name (kept for backwards compat)
+  companyNameRaw  String?   // Explicit raw field for new imports
+  countyNameRaw   String?
+  addressRaw      String?
+
+  // Parsed/normalized fields
+  city            String?
+  zip             String?
+  industry        String?
+  impacted        Int?
+  noticeDate      DateTime
+  effectiveOn     DateTime? // Layoff effective date
+  receivedDate    DateTime? // Date notice was received by state
+  notes           String?
+
+  // Source tracking
+  sourceUrl       String
+  sourceDocId     String?   // Unique ID from source if available
+
+  // Deduplication
+  dedupeHash      String?   @unique // Composite hash for upsert
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([stateId])
+  @@index([countyId])
+  @@index([companyId])
+  @@index([noticeDate])
+  @@index([employer])
+}
+
+model ImportRun {
+  id            Int       @id @default(autoincrement())
+  stateId       Int?
+  state         State?    @relation(fields: [stateId], references: [id])
+  source        String    // 'nc_commerce_csv', 'manual_upload', etc.
+  sourceFile    String?   // Filename if manual upload
+  startedAt     DateTime  @default(now())
+  finishedAt    DateTime?
+  status        String    // 'running', 'completed', 'failed', 'partial'
+  itemsFound    Int       @default(0)
+  itemsUpserted Int       @default(0)
+  itemsSkipped  Int       @default(0)
+  errorSummary  String?
+  createdAt     DateTime  @default(now())
+
+  @@index([stateId])
+  @@index([status])
+  @@index([startedAt])
+}
+
+model EmailSubscription {
+  id          Int       @id @default(autoincrement())
+  email       String    @unique
+  stateCode   String?   // null = all states
+  countySlug  String?   // null = all counties in state
+  verified    Boolean   @default(false)
+  verifyToken String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([stateCode])
+  @@index([verified])
+}
+
+// ============================================
+// LEGACY MODELS (kept for data, no UI in Phase 1)
+// ============================================
+
+model WeatherAlert {
+  id          Int       @id @default(autoincrement())
+  countyId    Int
+  county      County    @relation(fields: [countyId], references: [id])
+  event       String
+  status      String
+  startsAt    DateTime
+  endsAt      DateTime?
+  severity    String?
+  headline    String?
+  description String?
+  sourceUrl   String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([countyId])
+  @@index([event])
+  @@index([startsAt])
+}
+
+model Outage {
+  id           Int      @id @default(autoincrement())
+  countyId     Int
+  county       County   @relation(fields: [countyId], references: [id])
+  utility      String
+  customersOut Int
+  customersTot Int?
+  reportedAt   DateTime
+  sourceUrl    String
+  createdAt    DateTime @default(now())
+
+  @@index([countyId])
+  @@index([utility])
+  @@index([reportedAt])
+}
+
+model AmberAlert {
+  id          Int      @id @default(autoincrement())
+  caseId      String   @unique
+  status      String
+  title       String
+  description String?
+  region      String?
+  issuedAt    DateTime
+  sourceUrl   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([issuedAt])
+}
+
+model ScamAlert {
+  id          Int      @id @default(autoincrement())
+  title       String
+  category    String?
+  summary     String?
+  publishedAt DateTime
+  sourceUrl   String   @unique
+  createdAt   DateTime @default(now())
+
+  @@index([category])
+  @@index([publishedAt])
+}
+
+model Recall {
+  id          Int      @id @default(autoincrement())
+  agency      String
+  recallId    String
+  title       String
+  category    String?
+  affected    String?
+  publishedAt DateTime
+  sourceUrl   String   @unique
+  createdAt   DateTime @default(now())
+
+  @@index([agency])
+  @@index([category])
+  @@index([publishedAt])
+}
+
+model JobPost {
+  id            Int       @id @default(autoincrement())
+  company       String
+  title         String
+  location      String
+  countyId      Int?
+  county        County?   @relation(fields: [countyId], references: [id])
+  description   String
+  url           String?
+  email         String?
+  plan          String
+  featured      Boolean   @default(false)
+  active        Boolean   @default(true)
+  postedAt      DateTime  @default(now())
+  expiresAt     DateTime?
+  paypalOrderId String?
+
+  @@index([countyId])
+  @@index([active])
+  @@index([featured])
+  @@index([postedAt])
+}
+
+model RemoteJob {
+  id           Int      @id @default(autoincrement())
+  remoteId     Int      @unique // Remotive job ID
+  title        String
+  company      String
+  companyLogo  String?
+  category     String
+  tags         String[] // Array of tags
+  jobType      String   // full_time, part_time, etc
+  location     String   // candidate_required_location
+  salary       String?
+  description  String
+  url          String   // Affiliate-tagged URL
+  publishedAt  DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([category])
+  @@index([publishedAt])
+  @@index([jobType])
+}

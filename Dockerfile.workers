@@ -1,0 +1,25 @@
+# Dockerfile for ncwarn-workers (BullMQ job processors)
+FROM node:20-slim
+
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json* ./
+COPY prisma ./prisma/
+
+# Install all dependencies (including dev deps for tsx)
+RUN npm ci && npx prisma generate && npm cache clean --force
+
+# Copy application code needed for workers
+COPY lib ./lib/
+COPY jobs ./jobs/
+COPY scripts ./scripts/
+COPY tsconfig.json ./
+
+ENV NODE_ENV=production
+
+HEALTHCHECK --interval=60s --timeout=10s --start-period=30s --retries=3 \
+  CMD pgrep -f "run-ingests" > /dev/null || exit 1
+
+CMD ["npx", "tsx", "scripts/run-ingests.mjs", "--schedule"]

@@ -1,0 +1,20 @@
+/* NCWARN - North Carolina Warnings, Alerts & WARN Notices */
+
+/* TEAM */
+Built with care for North Carolina residents
+
+/* TECHNOLOGY */
+Framework: Next.js 14 (App Router)
+Language: TypeScript
+Database: PostgreSQL
+Cache: Redis
+Process Manager: PM2
+Web Server: Nginx
+
+/* DATA SOURCES */
+WARN Notices: NC Commerce
+Weather Alerts: National Weather Service
+Power Outages: Duke Energy, Dominion Energy
+AMBER Alerts: NCMEC, NC DOJ
+Scam Alerts: NC Department of Justice
+Recalls: NHTSA, CPSC, FDA
