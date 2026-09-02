@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { db, schema } from "@/lib/db";
 import { desc, eq, sql } from "drizzle-orm";
 import { FRESHNESS_LABELS } from "@/modules/coverage/coverage";
@@ -34,7 +35,7 @@ export default async function AdminSourcesPage({ searchParams }: PageProps<"/adm
         <thead><tr className="text-left border-b border-border"><th className="py-2 pr-3">Source</th><th className="py-2 pr-3">Terms</th><th className="py-2 pr-3">Active</th><th className="py-2 pr-3">Coverage state(s)</th><th className="py-2 pr-3">Last run</th><th className="py-2 pr-3">Outcome / counts</th><th className="py-2">Actions</th></tr></thead>
         <tbody>{rows.map(({ s, run, cov }) => (
           <tr key={s.id} className="border-b border-border align-top">
-            <td className="py-2 pr-3"><div className="font-medium">{s.name}</div><div className="text-muted font-mono text-xs">{s.key}</div></td>
+            <td className="py-2 pr-3"><div className="font-medium"><Link className="underline" href={`/admin/sources/${s.key}`}>{s.name}</Link></div><div className="text-muted font-mono text-xs">{s.key}</div></td>
             <td className="py-2 pr-3">{s.termsStatus}</td><td className="py-2 pr-3">{s.active ? "yes" : "no"}</td>
             <td className="py-2 pr-3">{cov.map((c) => <div key={c.id}>{FRESHNESS_LABELS[c.state]}{c.note ? ` — ${c.note}` : ""}</div>)}</td>
             <td className="py-2 pr-3">{run ? run.startedAt.toISOString().replace("T", " ").slice(0, 16) : "never"}</td>

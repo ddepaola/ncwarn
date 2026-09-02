@@ -40,9 +40,10 @@ export async function runCmpdIngest(opts: { since?: Date; jobId?: string; signal
         const recs = await cmpdAdapter.parse(art);
         counts.fetched += recs.length;
         const rows: Array<typeof schema.crimeIncidents.$inferInsert> = [];
+        const quarantine: Array<typeof schema.quarantinedRecords.$inferInsert> = [];
         for (const rec of recs) {
           const v = cmpdAdapter.validate(rec);
-          if (!v.ok) { counts.rejected++; continue; }
+          if (!v.ok) { counts.rejected++; quarantine.push({ sourceId: source.id, runId: run.id, externalId: rec.externalId || null, reasons: v.reasons, payload: rec.fields }); continue; }
           const a = rec.fields as unknown as CmpdAttributes;
           const { category, nonCriminal } = categoryForNibrs(a.HIGHEST_NIBRS_CODE);
           const hasPoint = typeof a.LATITUDE_PUBLIC === "number" && typeof a.LONGITUDE_PUBLIC === "number" && a.LATITUDE_PUBLIC !== 0;
@@ -78,6 +79,7 @@ export async function runCmpdIngest(opts: { since?: Date; jobId?: string; signal
           const created = res.filter((r) => r.created).length;
           counts.created += created; counts.updated += res.length - created;
         }
+        if (quarantine.length) await db.insert(schema.quarantinedRecords).values(quarantine.slice(0, 500));
         // Evidence: keep the fetched page as a raw record (one per page, hashed) — handoff §10 "preserve evidence".
         await db.insert(schema.rawRecords).values({
           sourceId: source.id, externalId: `page:${art.meta?.offset ?? 0}:${s.toISOString().slice(0, 10)}`, sourceUrl: art.sourceUrl, fetchedAt: art.fetchedAt,

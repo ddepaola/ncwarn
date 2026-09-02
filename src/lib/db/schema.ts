@@ -265,3 +265,27 @@ export const crimeIncidents = pgTable("crime_incidents", {
   index("crime_incidents_point_gix").using("gist", t.point),
   index("crime_incidents_reported").on(t.sourceId, t.reportedAt),
 ]);
+
+/** Records that failed validation, kept with reasons so an operator can review rather than silently dropping (handoff §10). */
+export const quarantinedRecords = pgTable("quarantined_records", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  sourceId: uuid("source_id").notNull().references(() => sources.id),
+  runId: uuid("run_id").references(() => sourceRuns.id),
+  externalId: text("external_id"),
+  reasons: text("reasons").array().notNull(),
+  payload: jsonb("payload").notNull(),
+  reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+  reviewNote: text("review_note"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [index("quarantined_source_created").on(t.sourceId, t.createdAt)]);
+
+/** Operator suppressions: hide a specific source record from public output (e.g. agency correction, misgeocode). Audited. */
+export const suppressions = pgTable("suppressions", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  sourceId: uuid("source_id").notNull().references(() => sources.id),
+  externalId: text("external_id").notNull(),
+  reason: text("reason").notNull(),
+  actor: text("actor").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  liftedAt: timestamp("lifted_at", { withTimezone: true }),
+}, (t) => [index("suppressions_source_external").on(t.sourceId, t.externalId)]);

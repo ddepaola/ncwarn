@@ -31,7 +31,7 @@ export interface CrimeStats {
   nonCriminalExcluded: number;
   categories: Array<{ category: CrimeCategory; label: string; count: number; previous: number }>;
   trend: Trend;
-  recent: Array<{ id: string; reportedAt: Date; category: CrimeCategory; agencyClassification: string; locationText: string | null; distanceMiles: number; clearanceStatus: string | null }>;
+  recent: Array<{ id: string; externalId: string; reportedAt: Date; category: CrimeCategory; agencyClassification: string; locationText: string | null; distanceMiles: number; clearanceStatus: string | null }>;
 }
 
 export function parseRadius(v: unknown): RadiusMiles {
@@ -70,7 +70,8 @@ export async function crimeStatsNear(point: LngLat, opts: { radiusMiles: RadiusM
   const radiusMeters = opts.radiusMiles * MILES_TO_METERS;
   const origin = sql`ST_SetSRID(ST_MakePoint(${point.lng}::float8, ${point.lat}::float8), 4326)::geography`;
   const within = sql`ST_DWithin(${schema.crimeIncidents.point}, ${origin}, ${radiusMeters}::float8)`;
-  const base = and(eq(schema.crimeIncidents.sourceId, source.id), within);
+  const notSuppressed = sql`not exists (select 1 from ${schema.suppressions} sp where sp.source_id = ${schema.crimeIncidents.sourceId} and sp.external_id = ${schema.crimeIncidents.externalId} and sp.lifted_at is null)`;
+  const base = and(eq(schema.crimeIncidents.sourceId, source.id), within, notSuppressed);
 
   const periodExpr = sql<string>`case when ${schema.crimeIncidents.reportedAt} >= ${tsCur} then 'current' else 'previous' end`;
   const rows = await db.select({
@@ -93,7 +94,7 @@ export async function crimeStatsNear(point: LngLat, opts: { radiusMiles: RadiusM
   }
 
   const recent = await db.select({
-    id: schema.crimeIncidents.id, reportedAt: schema.crimeIncidents.reportedAt, category: schema.crimeIncidents.category,
+    id: schema.crimeIncidents.id, externalId: schema.crimeIncidents.externalId, reportedAt: schema.crimeIncidents.reportedAt, category: schema.crimeIncidents.category,
     agencyClassification: schema.crimeIncidents.agencyClassification, locationText: schema.crimeIncidents.locationText,
     clearanceStatus: schema.crimeIncidents.clearanceStatus,
     distance: sql<number>`ST_Distance(${schema.crimeIncidents.point}, ${origin})`,
@@ -108,7 +109,7 @@ export async function crimeStatsNear(point: LngLat, opts: { radiusMiles: RadiusM
     categories: CRIME_CATEGORIES.map((c) => ({ category: c, label: CATEGORY_LABELS[c], ...cat.get(c)! })),
     trend: computeTrend({ count: total, complete: currentComplete }, { count: previousTotal, complete: previousComplete }),
     recent: recent.map((r) => ({
-      id: r.id, reportedAt: r.reportedAt, agencyClassification: r.agencyClassification, locationText: r.locationText, clearanceStatus: r.clearanceStatus,
+      id: r.id, externalId: r.externalId, reportedAt: r.reportedAt, agencyClassification: r.agencyClassification, locationText: r.locationText, clearanceStatus: r.clearanceStatus,
       category: (CRIME_CATEGORIES as readonly string[]).includes(r.category) ? (r.category as CrimeCategory) : "other_reported_incident",
       // Two decimals at most: source coordinates are block-masked, so finer distance would be false precision.
       distanceMiles: Math.round((Number(r.distance) / MILES_TO_METERS) * 100) / 100,

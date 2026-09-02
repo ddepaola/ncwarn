@@ -15,6 +15,13 @@
       "when": 1788380433083,
       "tag": "0001_crime_incidents",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788384455861,
+      "tag": "0002_quarantine_suppressions",
+      "breakpoints": true
     }
   ]
 }
