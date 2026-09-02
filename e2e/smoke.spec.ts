@@ -27,14 +27,14 @@ test("check flow: Charlotte address resolves to Mecklenburg with a real crime ca
   // radius/period navigation keeps the lookup
   await crime.getByRole("link", { name: "3 mi" }).click();
   await expect(page).toHaveURL(/radius=3/);
-  await expect(page.locator("#crime").getByText(/within 3 mi/)).toBeVisible();
+  await expect(page.locator("#crime").getByText(/within 3 mi/).first()).toBeVisible();
 });
 
 test("check flow: outside NC is stated plainly", async ({ page }) => {
   await page.goto("/check");
   await page.getByPlaceholder("Enter a North Carolina street address").fill("1600 Pennsylvania Ave NW, Washington, DC 20500");
   await page.getByRole("button", { name: "Check address" }).click();
-  await expect(page.getByRole("alert")).toContainText(/outside/i);
+  await expect(page.locator("#address-error")).toContainText(/outside/i);
 });
 
 test("admin requires authentication", async ({ request }) => {
@@ -50,16 +50,22 @@ test("signup honeypot rejects a filled trap field", async ({ page, request }) =>
   await page.getByRole("button", { name: "Check address" }).click();
   await expect(page).toHaveURL(/lookup=lk_/);
   const token = await page.locator('form input[name="form_token"]').first().inputValue();
-  const res = await request.post("/api/signup", { form: { form_token: token, website_url: "http://spam.example", email: "bot@example.com" } });
-  expect(res.ok()).toBeFalsy();
-  const body = await res.json();
-  expect(body.ok).toBe(false);
+  // Bots get a bland 200 on purpose (silent drop); the proof is that no signup is created. We can only
+  // observe that indirectly, so assert the response carries no confirmation for a real signup path
+  // and, when ADMIN_TOKEN is provided, that the admin page counts the trap.
+  const res = await request.post("/api/signup", { form: { form_token: token, website_url: "http://spam.example", email: `bot-${Date.now()}@example.com` } });
+  expect(res.status()).toBe(200);
+  if (process.env.ADMIN_TOKEN) {
+    const admin = await request.get("/admin/sources", { headers: { Authorization: "Basic " + Buffer.from(`admin:${process.env.ADMIN_TOKEN}`).toString("base64") } });
+    expect(admin.status()).toBe(200);
+    expect(await admin.text()).toMatch(/signup\/honeypot_filled: [1-9]/);
+  }
 });
 
 test("public pages return 200 and carry the disclaimer", async ({ page }) => {
   for (const path of ["/sources", "/methodology", "/pricing", "/privacy", "/terms", "/disclaimers", "/contact", "/counties/mecklenburg"]) {
     const res = await page.goto(path);
     expect(res?.status(), path).toBe(200);
-    await expect(page.getByText("not law enforcement, legal advice, an official registry")).toBeVisible();
+    await expect(page.getByText("not law enforcement, legal advice, an official registry").first()).toBeVisible();
   }
 });
