@@ -8,6 +8,7 @@ export const metadata = genMeta({
   title: 'AMBER Alerts',
   description: 'Active AMBER Alerts for North Carolina. AMBER Alert is a program to help find abducted children.',
   path: '/amber',
+  noIndex: true,
 });
 
 export const dynamic = 'force-dynamic';

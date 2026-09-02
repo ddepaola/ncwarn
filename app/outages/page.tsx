@@ -8,6 +8,7 @@ export const metadata = genMeta({
   title: 'Power Outages',
   description: 'Current power outage information for North Carolina from Duke Energy, Dominion Energy, and electric cooperatives.',
   path: '/outages',
+  noIndex: true,
 });
 
 export const dynamic = 'force-dynamic';

@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
-const SITE_NAME = 'NCWARN';
+const SITE_NAME = 'NCWarn';
 const SITE_URL = 'https://ncwarn.com';
 const DEFAULT_DESCRIPTION =
-  'North Carolina Warnings, Alerts & WARN Notices. Check layoffs, weather alerts, power outages, recalls, AMBER and scam warnings by county.';
+  'Track WARN Act layoff notices across North Carolina. Free searchable database of plant closings and mass layoffs by company, county, and date. Updated with the latest filings from NC Commerce.';
 
 interface SeoParams {
   title?: string;
@@ -20,7 +20,7 @@ export function generateMetadata({
   image,
   noIndex = false,
 }: SeoParams = {}): Metadata {
-  const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} - North Carolina Warnings & Alerts`;
+  const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} - NC WARN Act Layoff Notices & Plant Closings`;
   const url = `${SITE_URL}${path}`;
 
   // Base metadata - OG images are handled by opengraph-image.tsx in each route
@@ -46,7 +46,17 @@ export function generateMetadata({
     },
     robots: noIndex
       ? { index: false, follow: false }
-      : { index: true, follow: true },
+      : {
+          index: true,
+          follow: true,
+          googleBot: {
+            index: true,
+            follow: true,
+            'max-video-preview': -1,
+            'max-image-preview': 'large' as const,
+            'max-snippet': -1,
+          },
+        },
   };
 
   // Only add image if explicitly provided (for pages without opengraph-image.tsx)
@@ -78,12 +88,24 @@ export function generateOrganizationSchema() {
     '@type': 'Organization',
     name: SITE_NAME,
     url: SITE_URL,
-    description: DEFAULT_DESCRIPTION,
-    address: {
-      '@type': 'PostalAddress',
-      addressRegion: 'NC',
-      addressCountry: 'US',
-    },
+    description: 'Free searchable database of WARN Act layoff notices for North Carolina. Track plant closings and mass layoffs by company, county, and date.',
+  };
+}
+
+export function generateFaqSchema(
+  faqs: { question: string; answer: string }[]
+) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    })),
   };
 }
 

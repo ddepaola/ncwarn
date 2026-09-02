@@ -7,21 +7,65 @@ import Link from 'next/link';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { NextSteps } from '@/components/NextSteps';
 import { Disclaimer } from '@/components/Disclaimer';
+import { generateFaqSchema, generateBreadcrumbSchema } from '@/lib/seo';
 
 export const metadata: Metadata = {
-  title: 'What is a WARN Notice? | Worker Adjustment and Retraining Notification Act | NCWarn.com',
+  title: 'What is a WARN Notice? WARN Act Explained for NC Workers (2026 Guide)',
   description:
-    'Learn about the WARN Act, which requires employers to provide 60-day advance notice of plant closings and mass layoffs. Understand your rights as an NC worker.',
+    'Learn what a WARN Act notice means for North Carolina workers. Understand the 60-day advance notice requirement for plant closings and mass layoffs, who must comply, penalties, and your rights.',
+  keywords: [
+    'what is a WARN notice',
+    'WARN Act explained',
+    'WARN Act North Carolina',
+    'plant closing notice',
+    'mass layoff notice',
+    'worker rights layoff NC',
+  ],
   openGraph: {
-    title: 'What is a WARN Notice?',
-    description: 'Understanding the Worker Adjustment and Retraining Notification Act.',
+    title: 'What is a WARN Notice? WARN Act Explained for NC Workers',
+    description: 'Learn about the WARN Act and what it means when your employer files a notice in North Carolina.',
     url: 'https://ncwarn.com/guides/what-is-a-warn-notice',
+  },
+  alternates: {
+    canonical: 'https://ncwarn.com/guides/what-is-a-warn-notice',
   },
 };
 
+const guideFaqs = [
+  {
+    question: 'What does WARN stand for?',
+    answer: 'WARN stands for Worker Adjustment and Retraining Notification. It is a federal law (the WARN Act) enacted in 1988 that requires employers with 100+ employees to provide at least 60 days advance notice before plant closings or mass layoffs.',
+  },
+  {
+    question: 'Does North Carolina have its own WARN Act law?',
+    answer: 'No, North Carolina does not have a separate state-level WARN law. However, the federal WARN Act applies to all qualifying employers in NC. Notices are filed with the NC Department of Commerce.',
+  },
+  {
+    question: 'What happens if an employer violates the WARN Act?',
+    answer: 'Employers who violate the WARN Act may be liable for back pay and benefits to each affected employee for each day of violation (up to 60 days), plus civil penalties of up to $500 per day.',
+  },
+  {
+    question: 'How many employees must be affected for a WARN notice to be required?',
+    answer: 'For a plant closing, 50 or more employees must be affected. For a mass layoff, either 500+ employees or 50-499 employees (if they represent 33% or more of the workforce) must be affected.',
+  },
+];
+
 export default function WarnGuide() {
+  // Safe: schema data is from static constants, not user input
+  const schemas = [
+    generateFaqSchema(guideFaqs),
+    generateBreadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'Guides', url: '/guides/what-is-a-warn-notice' },
+      { name: 'What is a WARN Notice?', url: '/guides/what-is-a-warn-notice' },
+    ]),
+  ];
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
+      {schemas.map((schema, i) => (
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      ))}
       <Breadcrumbs
         items={[
           { label: 'Home', href: '/' },

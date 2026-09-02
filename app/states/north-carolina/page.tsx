@@ -173,32 +173,32 @@ export default async function NorthCarolinaPage() {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Counties with Most Notices */}
-          <div className="bg-slate-50 rounded-lg p-4">
-            <h3 className="font-semibold text-slate-900 mb-3">Counties</h3>
-            <ul className="space-y-2">
+          <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+            <h3 className="font-bold text-slate-900 text-lg mb-4">Top Counties</h3>
+            <ul className="space-y-3">
               {topCounties.map((county) => (
                 <li key={county.id}>
                   <Link
                     href={`/states/north-carolina/warn/counties/${county.slug}`}
-                    className="flex justify-between items-center text-sm hover:text-blue-600"
+                    className="flex justify-between items-center py-1.5 px-2 -mx-2 rounded hover:bg-blue-50 transition-colors group"
                   >
-                    <span>{county.name}</span>
-                    <span className="text-slate-500">{county._count.notices}</span>
+                    <span className="text-sm font-semibold text-slate-900 group-hover:text-blue-700">{county.name}</span>
+                    <span className="bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded-full text-xs font-bold min-w-[28px] text-center">{county._count.notices}</span>
                   </Link>
                 </li>
               ))}
             </ul>
             <Link
               href="/states/north-carolina/warn/counties"
-              className="block mt-3 text-sm text-blue-600 hover:underline"
+              className="block mt-4 pt-3 border-t border-slate-200 text-sm text-blue-600 font-medium hover:underline"
             >
               View all counties →
             </Link>
           </div>
 
           {/* Quick Links */}
-          <div className="bg-slate-50 rounded-lg p-4">
-            <h3 className="font-semibold text-slate-900 mb-3">Resources</h3>
+          <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+            <h3 className="font-bold text-slate-900 text-lg mb-4">Resources</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/guides/what-is-a-warn-notice" className="text-blue-600 hover:underline">

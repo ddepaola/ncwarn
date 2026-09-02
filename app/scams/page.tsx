@@ -8,6 +8,7 @@ export const metadata = genMeta({
   title: 'Scam Alerts',
   description: 'Latest scam alerts and consumer warnings for North Carolina from the NC Department of Justice.',
   path: '/scams',
+  noIndex: true,
 });
 
 export const dynamic = 'force-dynamic';

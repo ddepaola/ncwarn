@@ -130,14 +130,14 @@ export default async function YearPage({ params }: PageProps) {
       <div className="grid lg:grid-cols-4 gap-8">
         {/* Month Navigation */}
         <div className="lg:col-span-1">
-          <div className="bg-slate-50 rounded-lg p-4 sticky top-4">
-            <h3 className="font-semibold text-slate-900 mb-3">Browse by Month</h3>
-            <ul className="space-y-1">
+          <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm sticky top-4">
+            <h3 className="font-bold text-slate-900 text-lg mb-4">Browse by Month</h3>
+            <ul className="space-y-3">
               {monthNames.map((month, index) => {
                 const count = monthCounts[index] || 0;
                 if (count === 0) {
                   return (
-                    <li key={month} className="text-sm text-slate-400">
+                    <li key={month} className="text-sm text-slate-400 py-1.5 px-2 -mx-2">
                       {month}
                     </li>
                   );
@@ -146,10 +146,10 @@ export default async function YearPage({ params }: PageProps) {
                   <li key={month}>
                     <Link
                       href={`/states/north-carolina/warn/${year}/${String(index + 1).padStart(2, '0')}`}
-                      className="flex justify-between text-sm text-blue-600 hover:underline"
+                      className="flex justify-between items-center py-1.5 px-2 -mx-2 rounded hover:bg-blue-50 transition-colors group"
                     >
-                      <span>{month}</span>
-                      <span className="text-slate-400">{count}</span>
+                      <span className="text-sm font-semibold text-slate-900 group-hover:text-blue-700">{month}</span>
+                      <span className="bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded-full text-xs font-bold min-w-[28px] text-center">{count}</span>
                     </Link>
                   </li>
                 );

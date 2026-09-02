@@ -1,69 +1,60 @@
 import { generateMetadata as genMeta } from '@/lib/seo';
 
 export const metadata = genMeta({
-  title: 'About NCWARN',
-  description: 'About NCWARN - North Carolina Warnings, Alerts & WARN Notices. Our mission is to keep NC residents informed.',
+  title: 'About NCWarn.com',
+  description: 'About NCWarn.com - Free searchable database of WARN Act layoff notices filed in North Carolina. Track plant closings and mass layoffs by company, county, and date.',
   path: '/about',
 });
 
 export default function AboutPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">About NCWARN</h1>
+      <h1 className="text-3xl font-bold text-slate-900 mb-6">About NCWarn.com</h1>
 
-      <div className="prose prose-lg max-w-none">
+      <div className="prose prose-lg prose-slate max-w-none">
         <p>
-          NCWARN is a free public service that aggregates warnings, alerts, and safety information
-          for North Carolina residents. Our goal is to provide a single, easy-to-use resource for
-          staying informed about potential hazards and important notices affecting our state.
+          NCWarn.com is a free public resource that tracks WARN Act layoff notices filed in
+          North Carolina. We make it easy to search, browse, and stay informed about plant
+          closings and mass layoffs affecting workers across the state.
         </p>
 
         <h2>What We Track</h2>
+        <p>
+          We track Worker Adjustment and Retraining Notification (WARN) Act notices filed with
+          the NC Department of Commerce. These notices are required by federal law when employers
+          with 100+ employees plan a plant closing or mass layoff affecting 50 or more workers.
+        </p>
+        <p>Our database lets you:</p>
         <ul>
-          <li>
-            <strong>WARN Act Notices</strong> - Worker Adjustment and Retraining Notification Act
-            layoff and plant closing notices filed with NC Commerce
-          </li>
-          <li>
-            <strong>Weather Alerts</strong> - Real-time warnings and advisories from the National
-            Weather Service
-          </li>
-          <li>
-            <strong>Power Outages</strong> - Current outage information from major NC utilities
-          </li>
-          <li>
-            <strong>AMBER Alerts</strong> - Child abduction emergency alerts
-          </li>
-          <li>
-            <strong>Scam Alerts</strong> - Consumer protection warnings from the NC Department of
-            Justice
-          </li>
-          <li>
-            <strong>Recalls</strong> - Vehicle, product, and food recalls from federal agencies
-            (NHTSA, CPSC, FDA)
-          </li>
+          <li>Browse all NC WARN notices by date, company, or county</li>
+          <li>See how many workers are affected by each layoff</li>
+          <li>Track layoff trends across North Carolina counties</li>
+          <li>Sign up for email alerts when new notices are filed</li>
         </ul>
 
         <h2>Data Sources</h2>
         <p>
-          All data on NCWARN is sourced from official government agencies and utility providers.
-          We aggregate publicly available information and present it in a user-friendly format.
-          For the most authoritative and up-to-date information, we encourage users to verify
-          with the original source.
+          All WARN Act data on NCWarn.com is sourced from the North Carolina Department of
+          Commerce, which publishes official WARN notice reports. We aggregate this publicly
+          available information and present it in a searchable, user-friendly format. For the
+          most authoritative and up-to-date information, we encourage users to verify with the{' '}
+          <a href="https://www.commerce.nc.gov/jobs-training/warn-notices" target="_blank" rel="noopener noreferrer">
+            official NC Commerce WARN page
+          </a>.
         </p>
 
         <h2>Our Mission</h2>
         <p>
-          We believe that access to safety information should be easy and free. By centralizing
-          alerts and warnings from multiple sources, we help North Carolinians stay informed and
-          prepared.
+          We believe workers deserve easy, free access to information about layoffs that may
+          affect their communities. By providing a searchable database and timely alerts, we help
+          North Carolinians stay informed and prepared during workforce transitions.
         </p>
 
         <h2>Accessibility</h2>
         <p>
-          NCWARN is committed to digital accessibility. We strive to meet WCAG 2.1 AA standards
-          to ensure our content is available to all users, including those using assistive
-          technologies.
+          NCWarn.com is committed to digital accessibility. We strive to meet WCAG 2.1 AA
+          standards to ensure our content is available to all users, including those using
+          assistive technologies.
         </p>
 
         <h2>Contact</h2>

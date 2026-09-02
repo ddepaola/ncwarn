@@ -9,6 +9,7 @@ export const metadata = genMeta({
   title: 'Remote Jobs',
   description: 'Browse remote job opportunities from top companies. Find work-from-home positions in software, marketing, design, and more.',
   path: '/jobs',
+  noIndex: true,
 });
 
 export const dynamic = 'force-dynamic';

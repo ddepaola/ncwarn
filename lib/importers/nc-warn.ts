@@ -16,8 +16,11 @@ import { normalizeCompanyName, slugifyCompany, normalizeCounty, slugifyCounty } 
 const logger = createLogger('importer:nc-warn');
 
 // NC Commerce WARN data source
-const NC_WARN_SOURCE_URL = 'https://www.commerce.nc.gov/data/warn-notices';
+// The actual NC Commerce URL serves PDF, not CSV. The URL fetch will likely fail.
+// Primary import path: manual CSV placed at MANUAL_CSV_PATH
+const NC_WARN_SOURCE_URL = 'https://www.commerce.nc.gov/data-tools-reports/labor-market-data-tools/workforce-warn-reports';
 const MANUAL_CSV_PATH = '/app/data/nc-warn-manual.csv';
+const MANUAL_CSV_GLOB = '/app/data/nc-warn-*.csv';
 const STATE_CODE = 'NC';
 
 export interface ImportResult {
@@ -228,21 +231,55 @@ async function fetchFromUrl(): Promise<string | null> {
 }
 
 /**
- * Read CSV from manual upload file
+ * Read CSV from manual upload file(s)
+ * Supports both a single nc-warn-manual.csv and year-specific nc-warn-YYYY.csv files
  */
 async function readFromFile(): Promise<string | null> {
-  const filePath = process.env.NC_WARN_CSV_PATH || MANUAL_CSV_PATH;
+  const dataDir = path.dirname(MANUAL_CSV_PATH);
+  let combinedCsv = '';
 
   try {
-    if (fs.existsSync(filePath)) {
-      logger.info({ filePath }, 'Reading from manual CSV file');
-      return fs.readFileSync(filePath, 'utf-8');
+    // Check for year-specific CSVs (nc-warn-2025.csv, nc-warn-2026.csv, etc.)
+    if (fs.existsSync(dataDir)) {
+      const files = fs.readdirSync(dataDir)
+        .filter(f => f.match(/^nc-warn-\d{4}\.csv$/))
+        .sort();
+
+      for (const file of files) {
+        const filePath = path.join(dataDir, file);
+        const content = fs.readFileSync(filePath, 'utf-8').trim();
+        if (content) {
+          logger.info({ filePath }, 'Reading year-specific CSV');
+          if (combinedCsv) {
+            // Skip header row for subsequent files
+            const lines = content.split('\n');
+            combinedCsv += '\n' + lines.slice(1).join('\n');
+          } else {
+            combinedCsv = content;
+          }
+        }
+      }
+    }
+
+    // Also check the main manual CSV
+    const mainPath = process.env.NC_WARN_CSV_PATH || MANUAL_CSV_PATH;
+    if (fs.existsSync(mainPath)) {
+      const content = fs.readFileSync(mainPath, 'utf-8').trim();
+      if (content) {
+        logger.info({ filePath: mainPath }, 'Reading main manual CSV');
+        if (combinedCsv) {
+          const lines = content.split('\n');
+          combinedCsv += '\n' + lines.slice(1).join('\n');
+        } else {
+          combinedCsv = content;
+        }
+      }
     }
   } catch (error) {
-    logger.error({ error, filePath }, 'Failed to read manual CSV');
+    logger.error({ error }, 'Failed to read CSV files');
   }
 
-  return null;
+  return combinedCsv || null;
 }
 
 /**

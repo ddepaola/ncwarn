@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
 
-export const alt = 'NCWARN - North Carolina Warnings & Alerts';
+export const alt = 'NCWarn - NC WARN Act Layoff Notices & Plant Closings';
 export const size = {
   width: 1200,
   height: 630,
@@ -19,60 +19,46 @@ export default async function Image() {
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
-          background: 'linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%)',
+          background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
           padding: '60px',
         }}
       >
-        {/* Top section with logo and tagline */}
+        {/* Top section with logo */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '24px',
+            gap: '20px',
             marginBottom: '40px',
           }}
         >
-          {/* Logo icon */}
           <div
             style={{
-              width: '80px',
-              height: '80px',
+              width: '64px',
+              height: '64px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-              borderRadius: '16px',
+              background: '#2563eb',
+              borderRadius: '12px',
+              fontSize: '32px',
             }}
           >
-            <svg width="50" height="50" viewBox="0 0 50 50">
-              <path
-                d="M25 5 L45 42 L5 42 Z"
-                fill="#fbbf24"
-                stroke="#ffffff"
-                strokeWidth="2"
-              />
-              <rect x="22" y="15" width="6" height="15" rx="2" fill="#1e3a5f" />
-              <circle cx="25" cy="35" r="3" fill="#1e3a5f" />
-            </svg>
+            ⚠️
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div
               style={{
-                fontSize: '48px',
+                fontSize: '42px',
                 fontWeight: 'bold',
                 color: '#ffffff',
                 letterSpacing: '-1px',
               }}
             >
-              NCWARN
+              NCWarn.com
             </div>
-            <div
-              style={{
-                fontSize: '20px',
-                color: '#94a3b8',
-              }}
-            >
-              North Carolina Warnings & Alerts
+            <div style={{ fontSize: '18px', color: '#94a3b8' }}>
+              North Carolina WARN Act Database
             </div>
           </div>
         </div>
@@ -88,26 +74,26 @@ export default async function Image() {
         >
           <div
             style={{
-              fontSize: '56px',
+              fontSize: '52px',
               fontWeight: 'bold',
               color: '#ffffff',
               lineHeight: 1.2,
-              marginBottom: '24px',
+              marginBottom: '20px',
             }}
           >
-            Stay Informed.
+            Track NC Layoffs &
             <br />
-            Stay Safe.
+            Plant Closings
           </div>
           <div
             style={{
-              fontSize: '24px',
+              fontSize: '22px',
               color: '#cbd5e1',
               maxWidth: '800px',
             }}
           >
-            Track layoffs, weather alerts, power outages, recalls, and emergency
-            notifications across North Carolina.
+            Free searchable database of WARN Act notices filed in North Carolina.
+            Search by company, county, or date.
           </div>
         </div>
 
@@ -120,11 +106,10 @@ export default async function Image() {
           }}
         >
           {[
-            { icon: '⚠️', label: 'WARN Notices' },
-            { icon: '🌪️', label: 'Weather Alerts' },
-            { icon: '⚡', label: 'Power Outages' },
-            { icon: '🚨', label: 'Recalls' },
-            { icon: '💼', label: 'Jobs' },
+            { label: 'WARN Notices' },
+            { label: 'By Company' },
+            { label: 'By County' },
+            { label: 'Updated 2026' },
           ].map((item) => (
             <div
               key={item.label}
@@ -132,13 +117,13 @@ export default async function Image() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                background: 'rgba(255, 255, 255, 0.1)',
-                padding: '12px 20px',
+                background: 'rgba(37, 99, 235, 0.3)',
+                border: '1px solid rgba(37, 99, 235, 0.5)',
+                padding: '10px 20px',
                 borderRadius: '8px',
               }}
             >
-              <span style={{ fontSize: '20px' }}>{item.icon}</span>
-              <span style={{ color: '#ffffff', fontSize: '16px' }}>
+              <span style={{ color: '#93c5fd', fontSize: '15px', fontWeight: 600 }}>
                 {item.label}
               </span>
             </div>

@@ -8,20 +8,35 @@ import Link from 'next/link';
 import { prisma } from '@/lib/db';
 import { NoticeCard } from '@/components/NoticeCard';
 import { Disclaimer } from '@/components/Disclaimer';
+import { generateFaqSchema } from '@/lib/seo';
 
 export const metadata: Metadata = {
-  title: 'North Carolina WARN Act Notices & Layoff Intelligence | NCWarn.com',
+  title: 'NC WARN Act Notices 2026 - North Carolina Layoffs & Plant Closings | NCWarn.com',
   description:
-    'Track WARN Act layoff notices across North Carolina. Search by company, county, or date. Stay informed about workforce reductions affecting NC workers.',
+    'Track all WARN Act layoff notices filed in North Carolina for 2026. Free searchable database of plant closings and mass layoffs by company, county, and date. 1,947+ workers affected in 2026 alone.',
+  keywords: [
+    'NC WARN notices',
+    'NC WARN Act',
+    'North Carolina layoffs',
+    'NC layoffs 2026',
+    'WARN notices North Carolina',
+    'NC plant closings',
+    'North Carolina WARN Act notices',
+    'warn act north carolina',
+    'nc warn notices 2026',
+  ],
   openGraph: {
-    title: 'NCWarn.com - NC WARN Act Layoff Notices',
-    description: 'Track WARN Act layoff notices across North Carolina.',
+    title: 'NC WARN Act Notices 2026 - North Carolina Layoffs & Plant Closings',
+    description: 'Track all WARN Act layoff notices filed in North Carolina. Free searchable database updated with the latest filings from NC Commerce.',
     url: 'https://ncwarn.com',
+  },
+  alternates: {
+    canonical: 'https://ncwarn.com',
   },
 };
 
 export const dynamic = 'force-dynamic';
-export const revalidate = 3600; // Revalidate hourly
+export const revalidate = 300; // Revalidate every 5 minutes
 
 async function getStats() {
   const state = await prisma.state.findUnique({ where: { code: 'NC' } });
@@ -82,17 +97,49 @@ export default async function HomePage() {
     return <div className="p-8">Error loading data</div>;
   }
 
+  const homepageFaqs = [
+    {
+      question: 'What is a WARN notice in North Carolina?',
+      answer: 'A WARN (Worker Adjustment and Retraining Notification) notice is a filing required by federal law when employers with 100+ employees plan a plant closing or mass layoff affecting 50 or more workers. In North Carolina, these notices are filed with the NC Department of Commerce at least 60 days before the layoff date.',
+    },
+    {
+      question: 'How many WARN notices have been filed in NC in 2026?',
+      answer: `As of March 2026, ${stats.totalNotices} WARN notices have been tracked across North Carolina, with ${stats.recentNotices} filed in the last 30 days affecting ${stats.recentImpacted.toLocaleString()} workers.`,
+    },
+    {
+      question: 'Where can I find NC WARN Act layoff notices?',
+      answer: 'NCWarn.com provides a free, searchable database of all WARN Act notices filed in North Carolina. You can search by company name, county, or date. Official notices are also available from the NC Department of Commerce.',
+    },
+    {
+      question: 'What should I do if my employer filed a WARN notice?',
+      answer: 'If your employer has filed a WARN notice, you should: (1) File for unemployment benefits at des.nc.gov within the first week, (2) Update your resume and LinkedIn profile, (3) Check NCWarn.com for details about the notice, and (4) Explore retraining programs through NCWorks Career Centers.',
+    },
+    {
+      question: 'Which NC counties have the most WARN notices?',
+      answer: 'Mecklenburg County (Charlotte area) and Wake County (Raleigh area) typically have the most WARN notices due to their large populations and corporate presence. You can browse notices by county on NCWarn.com.',
+    },
+  ];
+
+  // FAQ schema is safe - generated from static/controlled data, no user input
+  const faqSchemaJson = JSON.stringify(generateFaqSchema(homepageFaqs));
+
   return (
     <div className="min-h-screen">
+      {/* FAQ Schema for rich results */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: faqSchemaJson }}
+      />
+
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-slate-800 to-slate-900 text-white py-16">
         <div className="max-w-6xl mx-auto px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            North Carolina WARN Act Notices
+            NC WARN Act Notices 2026 — North Carolina Layoffs & Plant Closings
           </h1>
           <p className="text-xl text-slate-300 max-w-2xl mb-8">
-            Track layoffs and workforce reductions across North Carolina. Free, searchable
-            database updated regularly with the latest WARN Act filings.
+            Track layoffs and plant closings across North Carolina. Free searchable
+            database of {stats.totalNotices}+ WARN Act filings updated with the latest from NC Commerce.
           </p>
 
           <div className="flex flex-wrap gap-4">
@@ -212,6 +259,26 @@ export default async function HomePage() {
             title="Get Email Alerts"
             description="Sign up to receive notifications when new WARN notices are filed in your county."
           />
+        </div>
+      </section>
+
+      {/* FAQ Section - visible content matches FAQ schema */}
+      <section className="max-w-6xl mx-auto px-4 py-12">
+        <h2 className="text-2xl font-bold text-slate-900 mb-6">
+          Frequently Asked Questions About NC WARN Notices
+        </h2>
+        <div className="space-y-4">
+          {homepageFaqs.map((faq, i) => (
+            <details
+              key={i}
+              className="bg-white border border-slate-200 rounded-lg group"
+            >
+              <summary className="p-4 font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition-colors">
+                {faq.question}
+              </summary>
+              <div className="px-4 pb-4 text-slate-600">{faq.answer}</div>
+            </details>
+          ))}
         </div>
       </section>
 

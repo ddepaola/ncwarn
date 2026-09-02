@@ -138,13 +138,13 @@ export default async function CountyPage({ params }: PageProps) {
           <div className="grid lg:grid-cols-4 gap-8">
             {/* Year Sidebar */}
             <div className="lg:col-span-1">
-              <div className="bg-slate-50 rounded-lg p-4 sticky top-4">
-                <h3 className="font-semibold text-slate-900 mb-3">Notices by Year</h3>
-                <ul className="space-y-2">
+              <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm sticky top-4">
+                <h3 className="font-bold text-slate-900 text-lg mb-4">Notices by Year</h3>
+                <ul className="space-y-3">
                   {years.map((year) => (
-                    <li key={year} className="flex justify-between text-sm">
-                      <span className="text-slate-700">{year}</span>
-                      <span className="text-slate-500">
+                    <li key={year} className="flex justify-between items-center py-1.5 px-2 -mx-2 rounded">
+                      <span className="text-sm font-semibold text-slate-900">{year}</span>
+                      <span className="bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded-full text-xs font-bold">
                         {yearCounts[year].count} ({yearCounts[year].impacted.toLocaleString()})
                       </span>
                     </li>

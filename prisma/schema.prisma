@@ -268,3 +268,9 @@ model RemoteJob {
   @@index([publishedAt])
   @@index([jobType])
 }
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}

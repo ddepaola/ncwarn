@@ -12,13 +12,24 @@ import { Disclaimer } from '@/components/Disclaimer';
 import { NextSteps } from '@/components/NextSteps';
 
 export const metadata: Metadata = {
-  title: 'NC WARN Act Layoff Notices - Full Database | NCWarn.com',
+  title: 'All NC WARN Notices 2024-2026 - North Carolina Layoff Database',
   description:
-    'Complete database of North Carolina WARN Act layoff notices. Search by company, county, or date. Updated regularly with the latest workforce reduction filings.',
+    'Complete searchable database of all WARN Act layoff notices filed in North Carolina from 2024-2026. Browse plant closings, mass layoffs, and workforce reductions by company, county, and date.',
+  keywords: [
+    'NC WARN notices',
+    'North Carolina layoffs',
+    'NC layoff database',
+    'WARN Act notices NC',
+    'NC plant closings',
+    'North Carolina workforce reductions',
+  ],
   openGraph: {
-    title: 'North Carolina WARN Act Layoff Notices Database',
-    description: 'Complete database of NC WARN Act layoff notices. Search by company, county, or date.',
+    title: 'All NC WARN Act Layoff Notices 2024-2026',
+    description: 'Complete searchable database of NC WARN Act layoff notices. Browse by company, county, or date.',
     url: 'https://ncwarn.com/states/north-carolina/warn',
+  },
+  alternates: {
+    canonical: 'https://ncwarn.com/states/north-carolina/warn',
   },
 };
 
@@ -136,9 +147,9 @@ export default async function WarnHubPage({
           </div>
 
           {/* Browse by County */}
-          <div className="bg-slate-50 rounded-lg p-4">
-            <h3 className="font-semibold text-slate-900 mb-3">Top Counties</h3>
-            <ul className="space-y-1">
+          <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+            <h3 className="font-bold text-slate-900 text-lg mb-4">Top Counties</h3>
+            <ul className="space-y-3">
               {hasActiveCounties
                 .sort((a, b) => b._count.notices - a._count.notices)
                 .slice(0, 10)
@@ -146,17 +157,17 @@ export default async function WarnHubPage({
                   <li key={county.id}>
                     <Link
                       href={`/states/north-carolina/warn/counties/${county.slug}`}
-                      className="flex justify-between text-sm hover:text-blue-600"
+                      className="flex justify-between items-center py-1.5 px-2 -mx-2 rounded hover:bg-blue-50 transition-colors group"
                     >
-                      <span>{county.name}</span>
-                      <span className="text-slate-400">{county._count.notices}</span>
+                      <span className="text-sm font-semibold text-slate-900 group-hover:text-blue-700">{county.name}</span>
+                      <span className="bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded-full text-xs font-bold min-w-[28px] text-center">{county._count.notices}</span>
                     </Link>
                   </li>
                 ))}
             </ul>
             <Link
               href="/states/north-carolina/warn/counties"
-              className="block mt-3 text-sm text-blue-600 hover:underline"
+              className="block mt-4 pt-3 border-t border-slate-200 text-sm text-blue-600 font-medium hover:underline"
             >
               View all counties →
             </Link>

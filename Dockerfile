@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY package.json package-lock.json* ./
 COPY prisma ./prisma/
-RUN npm ci && npx prisma generate && npm cache clean --force
+RUN npm install --legacy-peer-deps && npx prisma generate && npm cache clean --force
 
 FROM node:20-slim AS builder
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*

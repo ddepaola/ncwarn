@@ -11,6 +11,7 @@ export const metadata = genMeta({
   title: 'Recalls & Safety',
   description: 'Search vehicle, product, and food recalls from NHTSA, CPSC, and FDA. Check if your products have been recalled.',
   path: '/recalls',
+  noIndex: true,
 });
 
 export const dynamic = 'force-dynamic';

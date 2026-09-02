@@ -101,13 +101,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${BASE_URL}/guides/what-is-a-warn-notice`,
       lastModified: now,
       changeFrequency: 'monthly',
-      priority: 0.5,
+      priority: 0.8,
     },
     {
       url: `${BASE_URL}/guides/what-to-do-after-a-layoff-in-nc`,
       lastModified: now,
       changeFrequency: 'monthly',
-      priority: 0.5,
+      priority: 0.8,
     }
   );
 

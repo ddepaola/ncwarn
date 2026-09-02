@@ -5,6 +5,7 @@ export const metadata = genMeta({
   title: 'Emergency Preparedness',
   description: 'Emergency preparedness guide for North Carolina residents. Build your kit, make a plan, and stay informed.',
   path: '/prepare',
+  noIndex: true,
 });
 
 const AFFILIATE_ENABLED = process.env.AFFILIATE_ENABLED === 'true';
