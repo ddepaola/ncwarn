@@ -1,0 +1,49 @@
+# NC Risk Radar — compose project "ncriskradar". Web bound to 127.0.0.1 only (nginx fronts it).
+name: ncriskradar
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: ncriskradar-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "128mb", "--maxmemory-policy", "noeviction"]
+    volumes: ["ncriskradar-redis-data:/data"]
+    healthcheck: { test: ["CMD", "redis-cli", "ping"], interval: 10s, timeout: 5s, retries: 3 }
+
+  migrate:
+    build: { context: ., dockerfile: Dockerfile.worker }
+    image: ncriskradar-worker
+    container_name: ncriskradar-migrate
+    env_file: .env
+    environment: { REDIS_URL: "redis://redis:6379/0", SERVICE_NAME: migrate }
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    command: ["sh", "-c", "npx tsx scripts/migrate.ts && npx tsx scripts/seed.ts"]
+    restart: "no"
+
+  web:
+    build: { context: ., dockerfile: Dockerfile, args: { APP_VERSION: "${APP_VERSION:-dev}" } }
+    image: ncriskradar-web
+    container_name: ncriskradar-web
+    restart: unless-stopped
+    ports: ["127.0.0.1:3020:3000"]
+    env_file: .env
+    environment: { REDIS_URL: "redis://redis:6379/0", HOSTNAME: "0.0.0.0", PORT: "3000" }
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    depends_on:
+      redis: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
+    healthcheck: { test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"], interval: 30s, timeout: 10s, start_period: 40s, retries: 3 }
+
+  worker:
+    image: ncriskradar-worker
+    container_name: ncriskradar-worker
+    restart: unless-stopped
+    env_file: .env
+    environment: { REDIS_URL: "redis://redis:6379/0", SERVICE_NAME: worker }
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    depends_on:
+      redis: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
+    healthcheck: { test: ["CMD-SHELL", "cat /proc/1/cmdline | grep -q tsx"], interval: 60s, timeout: 10s, start_period: 30s, retries: 3 }
+
+volumes:
+  ncriskradar-redis-data:

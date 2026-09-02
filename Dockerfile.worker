@@ -1,0 +1,15 @@
+# syntax=docker/dockerfile:1
+# Worker + migrations (tsx runtime; no build step needed).
+FROM node:22-alpine
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
+COPY tsconfig.json drizzle.config.ts ./
+COPY drizzle ./drizzle
+COPY src ./src
+COPY worker ./worker
+COPY scripts ./scripts
+ENV NODE_ENV=production SERVICE_NAME=worker
+RUN addgroup -S app && adduser -S app -G app && chown -R app:app /app
+USER app
+CMD ["npx", "tsx", "worker/index.ts"]
