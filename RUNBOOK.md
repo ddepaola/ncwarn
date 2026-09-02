@@ -36,5 +36,12 @@ Migrations are forward-only; write a new migration to undo schema changes.
 3. Replace the static `location /` in `ncwarn.conf` with the proxy block from `deploy/staging.ncwarn.com.conf` (upstream 127.0.0.1:3020); `nginx -t && systemctl reload nginx`.
 4. Verify TLS, redirects, robots, health, forms, logs. Rollback = restore the backed-up conf + reload.
 
+## Source imports (CMPD)
+- Scheduled: worker job scheduler `cmpd-every-6h` (BullMQ, prefix `ncrr`). Incremental runs re-scan from the last imported day minus 7 days; idempotent upsert on (source, external id) with content-hash change detection.
+- Manual: `/admin/sources` → "Run import now" (optional since-date), or `curl -u admin:$ADMIN_TOKEN -X POST -H 'content-type: application/json' -d '{"since":"2026-01-01"}' http://127.0.0.1:3020/api/admin/sources/cmpd_incidents/run`.
+- Watch: `docker compose logs -f worker | grep -E 'cmpd|source run'`; run rows in `source_runs`; freshness in `coverage_status`.
+- First backfill (760 days ≈ 190k rows) takes ~2–3 minutes against the ArcGIS service; a failed run marks coverage `temporarily_unavailable` only if there has been no success in 3 days.
+- Re-backfill from scratch: `truncate crime_incidents; delete from raw_records where source_id=(select id from sources where key='cmpd_incidents');` then a manual run.
+
 ## Health
 `GET /api/health` → `{status: ok|degraded, checks:{postgres, redis}}`. Worker heartbeat every 5 min, freshness recompute every 15 min.

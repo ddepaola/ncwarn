@@ -5,7 +5,8 @@ import { RADIUS_MILES, TIME_RANGES_DAYS } from "@/modules/crime/trend";
 import type { CrimeStats } from "@/modules/crime/queries";
 
 const fmtDate = (d: Date) => d.toISOString().slice(0, 10);
-const fmtDateTime = (d: Date) => d.toLocaleString("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
+// CMPD publishes report dates at day precision (local midnight); never display a fabricated time of day.
+const fmtLocalDate = (d: Date) => d.toLocaleDateString("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", year: "numeric" });
 
 /**
  * "Reported Crime Activity Near This Property" (handoff §7.2). No safety score, no
@@ -26,16 +27,20 @@ export function CrimeCard({ sources, stats, lookupId, radius, range, nonCmpdMuni
         <p className="bg-card border border-border rounded p-3 text-sm"><strong>Coverage not available for {nonCmpdMunicipality}.</strong> This town is policed by its own department, not CMPD, so CMPD’s open-data feed does not include it. Counts below would be misleading and are not shown. Check the town police department’s own reports instead.</p>
       )}
 
-      {!nonCmpdMunicipality && sources.map((s) => (
-        <div key={s.key} className="text-sm flex flex-wrap items-center gap-x-3 gap-y-1">
-          <StatusBadge state={s.state} label={FRESHNESS_LABELS[s.state]} />
-          {stats?.dataThrough && <span className="text-muted">data through {fmtDate(stats.dataThrough)}</span>}
-          {s.lastSuccessAt && <span className="text-muted">· imported {fmtDate(s.lastSuccessAt)}</span>}
-          {!stats && s.state === "integration_pending" && <span>Automated import is not live yet. <a className="underline" href={s.url} rel="noopener">View the agency’s own crime map</a>.</span>}
-          {!stats && s.state === "temporarily_unavailable" && <span>The source could not be reached recently; counts are withheld rather than shown as zero. <a className="underline" href={s.url} rel="noopener">View the agency’s own crime map</a>.</span>}
-          {!stats && s.state === "coverage_not_available" && <span>This agency does not publish a reusable feed.</span>}
-        </div>
-      ))}
+      {!nonCmpdMunicipality && sources.map((s) => {
+        const isStatsSource = stats?.sourceKey === s.key;
+        return (
+          <div key={s.key} className="text-sm flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="font-medium">{s.name}</span>
+            <StatusBadge state={s.state} label={FRESHNESS_LABELS[s.state]} />
+            {isStatsSource && stats?.dataThrough && <span className="text-muted">data through {fmtDate(stats.dataThrough)}</span>}
+            {isStatsSource && s.lastSuccessAt && <span className="text-muted">· imported {fmtDate(s.lastSuccessAt)}</span>}
+            {!isStatsSource && s.state === "integration_pending" && <span className="text-muted">Automated import not live yet · <a className="underline" href={s.url} rel="noopener">official source</a></span>}
+            {!isStatsSource && s.state === "temporarily_unavailable" && <span className="text-muted">Source unreachable recently; counts withheld rather than shown as zero · <a className="underline" href={s.url} rel="noopener">official source</a></span>}
+            {!isStatsSource && s.state === "coverage_not_available" && <span className="text-muted">No reusable feed · <a className="underline" href={s.url} rel="noopener">agency crime map</a></span>}
+          </div>
+        );
+      })}
 
       {!nonCmpdMunicipality && stats && (
         <>
@@ -67,7 +72,7 @@ export function CrimeCard({ sources, stats, lookupId, radius, range, nonCmpdMuni
               <caption className="sr-only">Most recent reported incidents within {radius} miles (up to 25)</caption>
               <thead><tr className="text-left border-b border-border"><th scope="col" className="py-1 pr-3">Reported</th><th scope="col" className="py-1 pr-3">Agency classification</th><th scope="col" className="py-1 pr-3">Category</th><th scope="col" className="py-1 pr-3">Block</th><th scope="col" className="py-1 pr-3 text-right">≈ mi</th><th scope="col" className="py-1">Status</th></tr></thead>
               <tbody>{stats.recent.map((r) => (
-                <tr key={r.id} className="border-b border-border align-top"><td className="py-1 pr-3 whitespace-nowrap">{fmtDateTime(r.reportedAt)}</td><td className="py-1 pr-3">{r.agencyClassification}</td><td className="py-1 pr-3">{stats.categories.find((c) => c.category === r.category)?.label}</td><td className="py-1 pr-3">{r.locationText ?? "—"}</td><td className="py-1 pr-3 text-right tabular-nums">{r.distanceMiles.toFixed(2)}</td><td className="py-1">{r.clearanceStatus ?? "—"}</td></tr>
+                <tr key={r.id} className="border-b border-border align-top"><td className="py-1 pr-3 whitespace-nowrap">{fmtLocalDate(r.reportedAt)}</td><td className="py-1 pr-3">{r.agencyClassification}</td><td className="py-1 pr-3">{stats.categories.find((c) => c.category === r.category)?.label}</td><td className="py-1 pr-3">{r.locationText ?? "—"}</td><td className="py-1 pr-3 text-right tabular-nums">{r.distanceMiles.toFixed(2)}</td><td className="py-1">{r.clearanceStatus ?? "—"}</td></tr>
               ))}{stats.recent.length === 0 && <tr><td colSpan={6} className="py-2 text-muted">No reported incidents in this radius and period.</td></tr>}</tbody>
             </table><p className="text-xs text-muted">Showing the {Math.min(25, stats.recent.length)} most recent of {stats.total.toLocaleString()}. Locations are published by the agency at the hundred-block level (e.g. “4900 CENTRAL AV” means the 4900 block), never the exact address.</p></div>
           )}
