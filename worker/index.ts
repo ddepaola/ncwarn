@@ -3,7 +3,8 @@ import IORedis from "ioredis";
 import { getEnv } from "../src/lib/env";
 import { logger } from "../src/lib/logger";
 import { db, schema, sqlClient } from "../src/lib/db";
-import { eq, and, isNull, sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
+import { runCmpdIngest } from "../src/modules/sources/ingest";
 
 /**
  * Worker process (handoff §11.1): scheduled source jobs, health/freshness
@@ -39,10 +40,22 @@ async function heartbeat(job: Job) {
   logger.debug({ jobId: job.id }, "worker heartbeat ok");
 }
 
+async function sourceRun(job: Job<{ key?: string; since?: string; actor?: string }>) {
+  const key = job.data?.key ?? "cmpd_incidents";
+  if (key !== "cmpd_incidents") { logger.warn({ key }, "no ingest handler for source"); return null; }
+  const since = job.data?.since ? new Date(job.data.since) : undefined;
+  logger.info({ jobId: job.id, key, since, actor: job.data?.actor }, "source run starting");
+  const result = await runCmpdIngest({ since, jobId: String(job.id) });
+  logger.info({ jobId: job.id, key, ...result }, "source run finished");
+  if (result.outcome === "failed") throw new Error(result.error ?? "ingest failed");
+  return result;
+}
+
 const worker = new Worker(QUEUE, async (job) => {
   switch (job.name) {
     case "recompute-freshness": return recomputeFreshness(job);
     case "heartbeat": return heartbeat(job);
+    case "source-run": return sourceRun(job);
     default: logger.warn({ name: job.name }, "unknown job"); return null;
   }
 }, { connection, prefix: PREFIX, concurrency: 2 });
@@ -54,6 +67,8 @@ async function scheduleRepeatables() {
   // Idempotent: BullMQ dedupes job schedulers by id.
   await systemQueue.upsertJobScheduler("freshness-every-15m", { every: 15 * 60 * 1000 }, { name: "recompute-freshness" });
   await systemQueue.upsertJobScheduler("heartbeat-every-5m", { every: 5 * 60 * 1000 }, { name: "heartbeat" });
+  // CMPD publishes daily; every 6h keeps freshness "current" (expected interval 24h) with margin.
+  await systemQueue.upsertJobScheduler("cmpd-every-6h", { every: 6 * 60 * 60 * 1000 }, { name: "source-run", data: { key: "cmpd_incidents", actor: "scheduler" } });
   logger.info("job schedulers registered");
 }
 
@@ -69,6 +84,3 @@ process.on("SIGTERM", () => void shutdown("SIGTERM"));
 process.on("SIGINT", () => void shutdown("SIGINT"));
 
 scheduleRepeatables().then(() => logger.info({ queue: QUEUE, prefix: PREFIX }, "worker started")).catch((err) => { logger.error({ err }, "worker failed to start"); process.exit(1); });
-
-// Unused import guard for `and`/`isNull` (kept for upcoming ingestion code paths)
-void and; void isNull;

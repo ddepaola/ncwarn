@@ -27,8 +27,8 @@ export const SOURCE_CATALOG: CatalogEntry[] = [
   },
   {
     key: "cmpd_incidents", name: "CMPD Incidents (Charlotte open data)",
-    authority: "Charlotte-Mecklenburg Police Department", url: "https://data.charlottenc.gov/",
-    topic: "crime", accessType: "open_data_api", termsStatus: "review_required",
+    authority: "Charlotte-Mecklenburg Police Department", url: "https://data.charlottenc.gov/datasets/charlotte::cmpd-incidents-1/about",
+    topic: "crime", accessType: "open_data_api", termsStatus: "permitted",
     coverageDescription: "CMPD jurisdiction only (City of Charlotte + contract areas). Excludes other Mecklenburg agencies (e.g., Huntersville, Cornelius, Davidson, Matthews, Mint Hill, Pineville).",
     initialState: "integration_pending", countyFips: ["37119"], expectedIntervalMinutes: 1440,
   },

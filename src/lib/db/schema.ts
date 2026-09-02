@@ -229,3 +229,39 @@ export const auditLog = pgTable("audit_log", {
   ipClass: text("ip_class"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+/**
+ * Normalized crime incidents (handoff §7.2 / §9.2 crime_incidents). One row per
+ * agency incident report; agency classification preserved verbatim next to our
+ * normalized category; geometry at the source's own precision (block for CMPD).
+ */
+export const crimeIncidents = pgTable("crime_incidents", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  sourceId: uuid("source_id").notNull().references(() => sources.id),
+  externalId: text("external_id").notNull(),
+  rawRecordId: uuid("raw_record_id").references(() => rawRecords.id),
+  agencyCode: text("agency_code"),               // e.g. NIBRS "23H"
+  agencyClassification: text("agency_classification").notNull(),
+  category: text("category").notNull(),          // CrimeCategory
+  nonCriminal: boolean("non_criminal").notNull().default(false),
+  reportedAt: timestamp("reported_at", { withTimezone: true }).notNull(),
+  incidentBeganAt: timestamp("incident_began_at", { withTimezone: true }),
+  locationText: text("location_text"),           // block-level address as published
+  city: text("city"),
+  zip: text("zip"),
+  point: geographyPoint("point"),
+  precision: precisionEnum("precision").notNull().default("block"),
+  clearanceStatus: text("clearance_status"),
+  locationType: text("location_type"),
+  patrolDivision: text("patrol_division"),
+  contentHash: text("content_hash").notNull(),
+  sourceUrl: text("source_url").notNull(),
+  fetchedAt: timestamp("fetched_at", { withTimezone: true }).notNull(),
+  parserVersion: text("parser_version").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex("crime_incidents_source_external").on(t.sourceId, t.externalId),
+  index("crime_incidents_point_gix").using("gist", t.point),
+  index("crime_incidents_reported").on(t.sourceId, t.reportedAt),
+]);
