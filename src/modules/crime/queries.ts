@@ -65,20 +65,22 @@ export async function crimeStatsNear(point: LngLat, opts: { radiusMiles: RadiusM
   const currentComplete = !!dataFrom && dataFrom <= currentStart;
   const previousComplete = !!dataFrom && dataFrom <= previousStart;
 
+  // Raw sql`` params bypass Drizzle's column mappers, so bind dates as ISO strings with explicit casts.
+  const tsCur = sql`${currentStart.toISOString()}::timestamptz`, tsPrev = sql`${previousStart.toISOString()}::timestamptz`, tsEnd = sql`${currentEnd.toISOString()}::timestamptz`;
   const radiusMeters = opts.radiusMiles * MILES_TO_METERS;
-  const origin = sql`ST_SetSRID(ST_MakePoint(${point.lng}, ${point.lat}), 4326)::geography`;
-  const within = sql`ST_DWithin(${schema.crimeIncidents.point}, ${origin}, ${radiusMeters})`;
+  const origin = sql`ST_SetSRID(ST_MakePoint(${point.lng}::float8, ${point.lat}::float8), 4326)::geography`;
+  const within = sql`ST_DWithin(${schema.crimeIncidents.point}, ${origin}, ${radiusMeters}::float8)`;
   const base = and(eq(schema.crimeIncidents.sourceId, source.id), within);
 
-  const periodExpr = sql<string>`case when ${schema.crimeIncidents.reportedAt} >= ${currentStart} then 'current' else 'previous' end`;
+  const periodExpr = sql<string>`case when ${schema.crimeIncidents.reportedAt} >= ${tsCur} then 'current' else 'previous' end`;
   const rows = await db.select({
     category: schema.crimeIncidents.category,
     nonCriminal: schema.crimeIncidents.nonCriminal,
     period: periodExpr,
     n: sql<number>`count(*)::int`,
   }).from(schema.crimeIncidents)
-    .where(and(base, sql`${schema.crimeIncidents.reportedAt} >= ${previousStart} and ${schema.crimeIncidents.reportedAt} < ${currentEnd}`))
-    .groupBy(schema.crimeIncidents.category, schema.crimeIncidents.nonCriminal, periodExpr);
+    .where(and(base, sql`${schema.crimeIncidents.reportedAt} >= ${tsPrev} and ${schema.crimeIncidents.reportedAt} < ${tsEnd}`))
+    .groupBy(schema.crimeIncidents.category, schema.crimeIncidents.nonCriminal, sql`3`); // positional: the CASE carries bind params, which Postgres cannot match textually in GROUP BY
 
   const cat = new Map<CrimeCategory, { count: number; previous: number }>();
   for (const c of CRIME_CATEGORIES) cat.set(c, { count: 0, previous: 0 });
@@ -96,7 +98,7 @@ export async function crimeStatsNear(point: LngLat, opts: { radiusMiles: RadiusM
     clearanceStatus: schema.crimeIncidents.clearanceStatus,
     distance: sql<number>`ST_Distance(${schema.crimeIncidents.point}, ${origin})`,
   }).from(schema.crimeIncidents)
-    .where(and(base, eq(schema.crimeIncidents.nonCriminal, false), sql`${schema.crimeIncidents.reportedAt} >= ${currentStart} and ${schema.crimeIncidents.reportedAt} < ${currentEnd}`))
+    .where(and(base, eq(schema.crimeIncidents.nonCriminal, false), sql`${schema.crimeIncidents.reportedAt} >= ${tsCur} and ${schema.crimeIncidents.reportedAt} < ${tsEnd}`))
     .orderBy(sql`${schema.crimeIncidents.reportedAt} desc`).limit(25);
 
   return {

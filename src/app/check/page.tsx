@@ -8,6 +8,7 @@ import { coverageForCounty, FRESHNESS_LABELS } from "@/modules/coverage/coverage
 import { REGISTRY_CARD } from "@/modules/registry/officialLinks";
 import { issueFormToken } from "@/modules/notifications/honeypot";
 import { MVP_COUNTIES } from "@/modules/coverage/jurisdiction";
+import { logger } from "@/lib/logger";
 import { CrimeCard } from "@/components/CrimeCard";
 import { crimeStatsNear, parseRadius, parseRange, NON_CMPD_MECKLENBURG_MUNICIPALITIES } from "@/modules/crime/queries";
 
@@ -39,7 +40,7 @@ export default async function CheckPage({ searchParams }: PageProps<"/check">) {
   const view = viewParam === "list" ? "list" : "summary";
   const nonCmpdMunicipality = row.countyFips === "37119" && row.municipality && NON_CMPD_MECKLENBURG_MUNICIPALITIES.some((m) => row.municipality!.toLowerCase().startsWith(m.toLowerCase())) ? row.municipality : null;
   const cmpdCovered = crimeSources.some((s) => s.key === "cmpd_incidents") && !nonCmpdMunicipality;
-  const crimeStats = cmpdCovered && row.point ? await crimeStatsNear(row.point, { radiusMiles: radius, rangeDays: range }).catch(() => null) : null;
+  const crimeStats = cmpdCovered && row.point ? await crimeStatsNear(row.point, { radiusMiles: radius, rangeDays: range }).catch((err) => { logger.error({ err: String(err), lookup: row.publicId }, "crime stats failed"); return null; }) : null;
   const fetchedAt = new Date().toISOString().slice(0, 10);
 
   return (
