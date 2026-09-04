@@ -4,14 +4,14 @@ import Image from "next/image";
 import { publicImage } from "@/lib/images";
 
 const PILLARS: Array<[string, string, string]> = [
-  ["Safety", "pillar-safety.png", "Reported local crime activity, official registered-offender resources, emergency information, and public-safety notices."],
-  ["Property", "pillar-property.png", "Flood exposure, environmental records, permits, tax changes, code matters, and other location-based public records."],
-  ["Development", "pillar-development.png", "Rezonings, land-use cases, proposed construction, road projects, utilities, sewer expansion, and public hearings."],
-  ["Government", "pillar-government.png", "Legislation, votes, campaign finance, contracts, public meetings, and decisions with geographic or financial impact."],
+  ["Safety", "pillar-safety.webp", "Reported local crime activity, official registered-offender resources, emergency information, and public-safety notices."],
+  ["Property", "pillar-property.webp", "Flood exposure, environmental records, permits, tax changes, code matters, and other location-based public records."],
+  ["Development", "pillar-development.webp", "Rezonings, land-use cases, proposed construction, road projects, utilities, sewer expansion, and public hearings."],
+  ["Government", "pillar-government.webp", "Legislation, votes, campaign finance, contracts, public meetings, and decisions with geographic or financial impact."],
 ];
 
 export default function Home() {
-  const hero = publicImage("hero-nc-map.png");
+  const hero = publicImage("hero-nc-map.webp");
   return (
     <div className="space-y-12">
       <section className={`pt-6 ${hero ? "grid lg:grid-cols-[3fr_2fr] gap-8 items-center" : ""}`}>

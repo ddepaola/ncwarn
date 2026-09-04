@@ -1,9 +1,9 @@
 # Site images
 
-Generated with Gemini (prompts in /docs? no — see BUILD-STATUS "Images" section). Drop files here with these exact names; pages degrade gracefully when a file is missing.
+Generated with Gemini (chat "North Carolina Civic Map Illustration"), cropped/resized and encoded by Claude; originals live in the project folder `images/originals/`. Pages degrade gracefully when a file is missing (`src/lib/images.ts`).
 
 | File | Used by | Size |
 |---|---|---|
-| `hero-nc-map.png` | Home hero (right column) | 1600×900 (16:9), ≤300 KB |
-| `og-card.png` | Open Graph / Twitter share image (layout metadata) | 1200×630 |
-| `pillar-safety.png`, `pillar-property.png`, `pillar-development.png`, `pillar-government.png` | Home "What every result answers" cards | 512×512 each |
+| `hero-nc-map.webp` | Home hero (right column, lg+) | 1600×900, ~28 KB |
+| `og-card.jpg` | Open Graph / Twitter share image (layout metadata; JPEG because some crawlers reject WebP) | 1200×630, ~40 KB |
+| `pillar-safety.webp`, `pillar-property.webp`, `pillar-development.webp`, `pillar-government.webp` | Home "What every result answers" cards | 512×512, ~5–7 KB each |
