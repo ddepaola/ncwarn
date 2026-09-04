@@ -22,6 +22,9 @@ RUN npm run build
 FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000 HOSTNAME=0.0.0.0
+# ARG does not cross stages: redeclare so /api/health reports the deployed commit, not "dev".
+ARG APP_VERSION=dev
+ENV APP_VERSION=$APP_VERSION
 RUN apk add --no-cache wget && addgroup -S app && adduser -S app -G app
 COPY --from=build --chown=app:app /app/.next/standalone ./
 COPY --from=build --chown=app:app /app/.next/static ./.next/static

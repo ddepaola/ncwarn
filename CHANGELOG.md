@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.3.1 — 2026-09-04
+- Site imagery generated and shipped: home hero, four pillar icons (WebP), Open Graph card (JPEG); 95 KB total, `next/image` with `unoptimized` so no sharp dependency is introduced.
+- Fixed: `APP_URL` never reached `docker build`, so Next baked `http://localhost:3000` into every `og:image`/canonical URL and the staging `noindex` rule silently never applied. It is now a build arg in `Dockerfile`/`docker-compose.yml`, and `deploy/deploy.sh` exports it from `.env` before building.
+- Fixed: `/api/health` always reported `version: "dev"` — `ARG` does not cross Docker stages, so `APP_VERSION` is now redeclared in the runner stage and reports the deployed commit.
+
 ## 0.3.0 — 2026-09-02
 - Admin review tools: per-source detail page (`/admin/sources/[key]`) with run history, quarantined records (validation failures now stored with reasons instead of being dropped; migration 0002) and reviewer notes, and suppressions (hide one agency record from all public output, audit-logged, liftable).
 - Crime list view shows the agency report number so corrections can reference it.
