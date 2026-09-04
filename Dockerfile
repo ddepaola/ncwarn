@@ -13,6 +13,10 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Build-time env: only public/non-secret values. DATABASE_URL not needed at build (pages are dynamic).
 ARG APP_VERSION=dev
 ENV APP_VERSION=$APP_VERSION
+# Canonical origin. Next bakes metadataBase (Open Graph URLs) and the staging noindex rule
+# into prerendered pages at build time, so this must be present here, not only at runtime.
+ARG APP_URL=http://localhost:3000
+ENV APP_URL=$APP_URL
 RUN npm run build
 
 FROM node:22-alpine AS runner
